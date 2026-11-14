@@ -1,0 +1,16 @@
+[INSTALL] Initializing update check. Platform: win32-x64, Extension Version: 0.0.1
+[INSTALL] Using custom channel override: production
+[INSTALL] Checking for updates at releaseBaseUrl=https://antigravity-cli-auto-updater-974169037036.us-central1.run.app...
+[INSTALL] Using cached binary version v1.5.4 (skipping version check).
+[INSTALL] Found existing valid binary v1.5.4 (>= 1.1.11). Checking for updates with 3s budget...
+[INSTALL] Previous installation in another window did not complete; continuing with installation...
+[INSTALL] Checking Antigravity releases...
+[INSTALL] Found release v1.5.6 (win32-x64): https://storage.googleapis.com/antigravity-public/antigravity-cli/1.5.6-6212266538958848/windows-x64/cli_windows_x64.exe
+[INSTALL] Downloading Antigravity Backend to temporary path C:\Users\Iman\.gemini\bin\agy.tmp.98d9dc33-b81d-4455-b90f-ed67b1963e3f...
+[INSTALL] Download progress: 10% (24214310/242141336 bytes)
+[INSTALL] Download progress: 20% (48429064/242141336 bytes)
+[INSTALL] Download progress: 30% (72643226/242141336 bytes)
+[INSTALL] Download progress: 40% (96860966/242141336 bytes)
+[INSTALL] Download progress: 50% (121071550/242141336 bytes)
+[INSTALL] Download progress: 60% (145285712/242141336 bytes)
+[INSTALL] Download progress: 70% (169507622/242141336 bytes)

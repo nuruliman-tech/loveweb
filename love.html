@@ -1,0 +1,1203 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Animasi Love Spesial - IMAN</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Plus+Jakarta+Sans:wght@300;400;600;700;800&family=Great+Vibes&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    body, html {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: radial-gradient(circle at center, #1b0724 0%, #0c0214 55%, #05010a 100%);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      color: #ffffff;
+      touch-action: manipulation;
+    }
+
+    #canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+      z-index: 1;
+    }
+
+    /* Ambient background glows */
+    .ambient-glow {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(120px);
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.45;
+      transition: all 1.5s ease;
+    }
+
+    .glow-1 {
+      width: 450px;
+      height: 450px;
+      top: 20%;
+      left: 20%;
+      background: radial-gradient(circle, #ff2d55 0%, rgba(255, 45, 85, 0) 70%);
+      animation: floatGlow 12s infinite alternate ease-in-out;
+    }
+
+    .glow-2 {
+      width: 500px;
+      height: 500px;
+      bottom: 15%;
+      right: 20%;
+      background: radial-gradient(circle, #a838ff 0%, rgba(168, 56, 255, 0) 70%);
+      animation: floatGlow 14s infinite alternate-reverse ease-in-out;
+    }
+
+    @keyframes floatGlow {
+      0% { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(40px, -40px) scale(1.15); }
+    }
+
+    /* UI Overlay */
+    .ui-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 10;
+      pointer-events: none;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      padding: 24px;
+    }
+
+    /* Top Bar Controls */
+    .top-bar {
+      width: 100%;
+      max-width: 900px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      pointer-events: auto;
+      gap: 12px;
+    }
+
+    .title-badge {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 18px;
+      background: rgba(255, 255, 255, 0.07);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 999px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      color: #ffd6e4;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    }
+
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      background: #ff3366;
+      border-radius: 50%;
+      box-shadow: 0 0 10px #ff3366;
+      animation: dotPulse 1.6s infinite ease-in-out;
+    }
+
+    @keyframes dotPulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.4); opacity: 0.5; }
+    }
+
+    .controls-group {
+      display: flex;
+      gap: 10px;
+    }
+
+    .control-btn {
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #ffffff;
+      padding: 8px 14px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.25);
+    }
+
+    .control-btn:hover {
+      background: rgba(255, 255, 255, 0.18);
+      border-color: rgba(255, 71, 119, 0.6);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(255, 45, 85, 0.35);
+    }
+
+    .control-btn:active {
+      transform: translateY(1px);
+    }
+
+    /* Start / Click Me Screen */
+    .start-screen {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      pointer-events: auto;
+      z-index: 20;
+      transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .start-screen.hidden {
+      opacity: 0;
+      pointer-events: none;
+      transform: translate(-50%, -50%) scale(0.85);
+    }
+
+    .heart-button {
+      position: relative;
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #ff2d55 0%, #ff5e7e 50%, #9900ff 100%);
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 0 50px rgba(255, 45, 85, 0.6), inset 0 0 20px rgba(255, 255, 255, 0.4);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      animation: heartPulse 1.8s infinite ease-in-out;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .heart-button:hover {
+      transform: scale(1.12);
+      box-shadow: 0 0 70px rgba(255, 45, 85, 0.85), 0 0 30px rgba(255, 255, 255, 0.6);
+    }
+
+    .heart-button svg {
+      width: 70px;
+      height: 70px;
+      fill: #ffffff;
+      filter: drop-shadow(0 4px 10px rgba(0,0,0,0.3));
+      animation: innerBeat 1.8s infinite ease-in-out;
+    }
+
+    @keyframes heartPulse {
+      0% { transform: scale(1); box-shadow: 0 0 35px rgba(255, 45, 85, 0.5); }
+      50% { transform: scale(1.08); box-shadow: 0 0 65px rgba(255, 45, 85, 0.8); }
+      100% { transform: scale(1); box-shadow: 0 0 35px rgba(255, 45, 85, 0.5); }
+    }
+
+    @keyframes innerBeat {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.15); }
+    }
+
+    .start-text {
+      margin-top: 24px;
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: #fff;
+      text-shadow: 0 2px 15px rgba(255, 45, 85, 0.7);
+      letter-spacing: 0.5px;
+    }
+
+    .start-subtext {
+      margin-top: 8px;
+      font-size: 0.95rem;
+      color: rgba(255, 255, 255, 0.75);
+      font-weight: 400;
+    }
+
+    /* Center Message Card */
+    .center-card {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      pointer-events: none;
+      z-index: 5;
+      opacity: 0;
+      transition: opacity 1.5s cubic-bezier(0.16, 1, 0.3, 1) 0.8s, transform 1.5s cubic-bezier(0.16, 1, 0.3, 1) 0.8s;
+      transform: translate(-50%, -50%) scale(0.9);
+    }
+
+    .center-card.visible {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
+
+    .center-name {
+      font-family: 'Great Vibes', cursive;
+      font-size: clamp(3.2rem, 8vw, 5.5rem);
+      font-weight: 400;
+      line-height: 1.1;
+      background: linear-gradient(135deg, #ffffff 10%, #ffd1df 40%, #ff6b8b 70%, #ff2d55 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 0 25px rgba(255, 45, 85, 0.85));
+      animation: textFloat 3s infinite ease-in-out;
+    }
+
+    .center-quote {
+      font-family: 'Caveat', cursive;
+      font-size: clamp(1.2rem, 3.2vw, 1.8rem);
+      color: #ffe6ee;
+      margin-top: 6px;
+      letter-spacing: 0.5px;
+      text-shadow: 0 0 12px rgba(255, 105, 180, 0.7);
+    }
+
+    @keyframes textFloat {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
+    }
+
+    /* Bottom Prompt Hint */
+    .bottom-hint {
+      pointer-events: auto;
+      text-align: center;
+      font-size: 0.88rem;
+      color: rgba(255, 255, 255, 0.65);
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      padding: 10px 22px;
+      border-radius: 999px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .bottom-hint:hover {
+      background: rgba(255, 255, 255, 0.12);
+      color: #ffffff;
+      border-color: rgba(255, 45, 85, 0.4);
+    }
+
+    /* Custom Name Modal Dialog */
+    .modal-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      z-index: 100;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      padding: 20px;
+    }
+
+    .modal-backdrop.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-box {
+      background: linear-gradient(145deg, rgba(30, 10, 40, 0.95), rgba(15, 3, 20, 0.98));
+      border: 1px solid rgba(255, 71, 119, 0.35);
+      border-radius: 24px;
+      padding: 30px;
+      width: 100%;
+      max-width: 420px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7), 0 0 40px rgba(255, 45, 85, 0.25);
+      transform: scale(0.9);
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .modal-backdrop.active .modal-box {
+      transform: scale(1);
+    }
+
+    .modal-title {
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: #ffccd8;
+      margin-bottom: 8px;
+    }
+
+    .modal-desc {
+      font-size: 0.88rem;
+      color: rgba(255, 255, 255, 0.7);
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+
+    .modal-input {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 12px;
+      padding: 12px 16px;
+      font-size: 1.05rem;
+      color: #ffffff;
+      outline: none;
+      margin-bottom: 20px;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .modal-input:focus {
+      border-color: #ff2d55;
+      box-shadow: 0 0 16px rgba(255, 45, 85, 0.4);
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+    }
+
+    .modal-btn {
+      padding: 10px 20px;
+      border-radius: 999px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s ease;
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.1);
+      color: #ffffff;
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.18);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #ff2d55, #ff5e7e);
+      color: #ffffff;
+      box-shadow: 0 4px 15px rgba(255, 45, 85, 0.4);
+    }
+
+    .btn-primary:hover {
+      box-shadow: 0 6px 20px rgba(255, 45, 85, 0.6);
+      transform: translateY(-1px);
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 600px) {
+      .ui-container {
+        padding: 16px;
+      }
+      .top-bar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .controls-group {
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+      .title-badge {
+        justify-content: center;
+      }
+      .heart-button {
+        width: 120px;
+        height: 120px;
+      }
+      .heart-button svg {
+        width: 55px;
+        height: 55px;
+      }
+      .start-text {
+        font-size: 1.15rem;
+      }
+      .bottom-hint {
+        font-size: 0.8rem;
+        padding: 8px 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Ambient Glow Background -->
+  <div class="ambient-glow glow-1" id="glow1"></div>
+  <div class="ambient-glow glow-2" id="glow2"></div>
+
+  <!-- Main Particle Canvas -->
+  <canvas id="canvas"></canvas>
+
+  <!-- UI Overlay -->
+  <div class="ui-container">
+    <!-- Top Navigation & Controls -->
+    <header class="top-bar">
+      <div class="title-badge">
+        <span class="pulse-dot"></span>
+        <span>Animasi Hati &bull; Teks <strong id="badgeName" style="color: #ff3366;">IMAN</strong></span>
+      </div>
+
+      <div class="controls-group">
+        <button class="control-btn" id="soundBtn" title="Aktifkan/Matikan Suara">
+          <span id="soundIcon">🔊</span>
+          <span id="soundLabel">Musik: On</span>
+        </button>
+
+        <button class="control-btn" id="themeBtn" title="Ganti Tema Warna">
+          <span>🎨</span>
+          <span id="themeLabel">Tema</span>
+        </button>
+
+        <button class="control-btn" id="renameBtn" title="Ganti Teks / Nama">
+          <span>✏️</span>
+          <span>Ubah Nama</span>
+        </button>
+
+        <button class="control-btn" id="replayBtn" title="Ulangi Ledakan Hati">
+          <span>🔄</span>
+          <span>Ulangi</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Center Card with Special Name & Message -->
+    <div class="center-card" id="centerCard">
+      <h1 class="center-name" id="mainDisplay">Iman</h1>
+      <p class="center-quote" id="mainQuote">Setiap detak jantung ini, terukir namamu ❤️</p>
+    </div>
+
+    <!-- Bottom Interactive Hint -->
+    <footer class="bottom-hint" id="bottomHint">
+      <span>✨</span>
+      <span id="hintText">Ketuk di mana saja pada layar untuk memunculkan kembang api cinta!</span>
+    </footer>
+  </div>
+
+  <!-- Start Screen (Pencet di Sini) -->
+  <div class="start-screen" id="startScreen">
+    <button class="heart-button" id="startBtn" aria-label="Pencet Untuk Membuka">
+      <svg viewBox="0 0 24 24">
+        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+      </svg>
+    </button>
+    <div class="start-text">Ada Pesan Spesial Untukmu ✨</div>
+    <div class="start-subtext">Pencet tombol love di atas untuk membuka</div>
+  </div>
+
+  <!-- Modal Ubah Nama -->
+  <div class="modal-backdrop" id="modalBackdrop">
+    <div class="modal-box">
+      <h3 class="modal-title">Ganti Teks Pembentuk Love</h3>
+      <p class="modal-desc">Ketik nama atau kata yang ingin kamu gunakan untuk membentuk hati ini:</p>
+      <input type="text" class="modal-input" id="nameInput" maxlength="15" value="IMAN" placeholder="Contoh: IMAN, Nurul, Sayang...">
+      <div class="modal-actions">
+        <button class="modal-btn btn-secondary" id="cancelModal">Batal</button>
+        <button class="modal-btn btn-primary" id="saveModal">Terapkan</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* ==========================================================
+       CONFIG & THEMES
+       ========================================================== */
+    let currentName = "IMAN";
+    let isSoundOn = true;
+    let audioCtx = null;
+    let hasExploded = false;
+
+    const THEMES = [
+      {
+        name: "Romantic Rose",
+        colors: ["#ff2d55", "#ff4081", "#ff6b8b", "#ff758c", "#ff8da1", "#ffffff", "#ffd1dc"],
+        glow1: "#ff2d55",
+        glow2: "#a838ff",
+        bgCenter: "#1b0724",
+        bgOuter: "#05010a"
+      },
+      {
+        name: "Purple Neon",
+        colors: ["#b5179e", "#7209b7", "#4361ee", "#4cc9f0", "#f72585", "#ffffff"],
+        glow1: "#f72585",
+        glow2: "#3a0ca3",
+        bgCenter: "#140728",
+        bgOuter: "#03010c"
+      },
+      {
+        name: "Golden Starlight",
+        colors: ["#ffb703", "#fb8500", "#ffd166", "#fff1c5", "#ffffff", "#e76f51"],
+        glow1: "#fb8500",
+        glow2: "#d4a373",
+        bgCenter: "#221303",
+        bgOuter: "#0a0501"
+      },
+      {
+        name: "Emerald Fantasy",
+        colors: ["#06d6a0", "#118ab2", "#2ec4b6", "#cbf3f0", "#ffffff", "#70e000"],
+        glow1: "#06d6a0",
+        glow2: "#0077b6",
+        bgCenter: "#031d1d",
+        bgOuter: "#01090a"
+      }
+    ];
+
+    let currentThemeIndex = 0;
+
+    /* ==========================================================
+       CANVAS & RESIZE SETUP
+       ========================================================== */
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
+
+    let width = (canvas.width = window.innerWidth);
+    let height = (canvas.height = window.innerHeight);
+
+    window.addEventListener("resize", () => {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+      recalculateHeartTargets();
+    });
+
+    /* ==========================================================
+       AUDIO SYNTHESIZER (Pure Web Audio API - Zero Dependencies)
+       ========================================================== */
+    function initAudio() {
+      if (!audioCtx) {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (AudioContext) {
+          audioCtx = new AudioContext();
+        }
+      }
+      if (audioCtx && audioCtx.state === "suspended") {
+        audioCtx.resume();
+      }
+    }
+
+    // Play sparkling chime note
+    function playChime(freq = 523.25, duration = 0.8, type = "sine") {
+      if (!isSoundOn || !audioCtx) return;
+      try {
+        const now = audioCtx.currentTime;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, now);
+
+        gain.gain.setValueAtTime(0.12, now);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        osc.start(now);
+        osc.stop(now + duration);
+      } catch (e) {
+        // Audio policy or error ignore
+      }
+    }
+
+    // Pentatonic scale frequencies for musical click chimes
+    const PENTATONIC = [261.63, 293.66, 329.63, 392.00, 440.00, 523.25, 587.33, 659.25, 783.99];
+
+    function playRandomMelody() {
+      const note = PENTATONIC[Math.floor(Math.random() * PENTATONIC.length)];
+      playChime(note, 0.9, "sine");
+      setTimeout(() => {
+        const harmony = note * 1.5; // perfect fifth
+        playChime(harmony, 0.7, "triangle");
+      }, 70);
+    }
+
+    // Grand explosion chord
+    function playExplosionSound() {
+      if (!isSoundOn || !audioCtx) return;
+      const chords = [261.63, 329.63, 392.00, 523.25, 659.25];
+      chords.forEach((freq, idx) => {
+        setTimeout(() => {
+          playChime(freq, 1.8 + idx * 0.2, "sine");
+        }, idx * 60);
+      });
+    }
+
+    /* ==========================================================
+       PARAMETRIC HEART MATHEMATICS
+       ========================================================== */
+    // Standard mathematical cardioid heart curve
+    // x(t) = 16 * sin^3(t)
+    // y(t) = -(13 * cos(t) - 5 * cos(2t) - 2 * cos(3t) - cos(4t))
+    function getHeartPoint(t, scale = 1) {
+      const x = 16 * Math.pow(Math.sin(t), 3);
+      const y = -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t));
+      return { x: x * scale, y: y * scale };
+    }
+
+    /* ==========================================================
+       PARTICLE SYSTEMS
+       ========================================================== */
+    const heartParticles = [];
+    const burstParticles = [];
+    const ambientStars = [];
+
+    // Background Twinkling Stardust
+    for (let i = 0; i < 90; i++) {
+      ambientStars.push({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        size: Math.random() * 2 + 0.6,
+        alpha: Math.random(),
+        speed: Math.random() * 0.015 + 0.005,
+        driftX: (Math.random() - 0.5) * 0.2,
+        driftY: (Math.random() - 0.5) * 0.2
+      });
+    }
+
+    /* Heart Particle: Every piece that forms the heart is the word 'IMAN' */
+    class TextHeartParticle {
+      constructor(targetX, targetY, scaleFactor, text, color, delay = 0) {
+        this.originTargetX = targetX;
+        this.originTargetY = targetY;
+        this.targetX = targetX;
+        this.targetY = targetY;
+
+        // Start position
+        this.x = width / 2;
+        this.y = height / 2;
+
+        // Random blast velocity on explosion
+        const angle = Math.random() * Math.PI * 2;
+        const blastSpeed = Math.random() * 28 + 6;
+        this.vx = Math.cos(angle) * blastSpeed;
+        this.vy = Math.sin(angle) * blastSpeed;
+
+        this.text = text;
+        this.color = color;
+        this.baseSize = Math.floor(Math.random() * 3 + 11); // 11px - 14px
+        this.size = this.baseSize;
+        this.alpha = 0;
+        this.maxAlpha = Math.random() * 0.35 + 0.65; // 0.65 - 1.0
+
+        this.friction = 0.93;
+        this.spring = 0.035 + Math.random() * 0.025;
+        this.damping = 0.82;
+        this.delay = delay;
+
+        this.floatingPhase = Math.random() * Math.PI * 2;
+        this.floatingSpeed = Math.random() * 0.03 + 0.015;
+        this.floatAmp = Math.random() * 2.5 + 1.2;
+
+        this.rotation = (Math.random() - 0.5) * 0.4;
+        this.rotationSpeed = (Math.random() - 0.5) * 0.01;
+      }
+
+      update(time, heartScale, mouseX, mouseY) {
+        if (this.delay > 0) {
+          this.delay--;
+          return;
+        }
+
+        // Target position with heartbeat scale and floating wave
+        const floatX = Math.cos(time * this.floatingSpeed + this.floatingPhase) * this.floatAmp;
+        const floatY = Math.sin(time * this.floatingSpeed + this.floatingPhase) * this.floatAmp;
+
+        const scaledTargetX = width / 2 + (this.originTargetX - width / 2) * heartScale + floatX;
+        const scaledTargetY = height / 2 + (this.originTargetY - height / 2) * heartScale + floatY;
+
+        // Spring physics towards target
+        const dx = scaledTargetX - this.x;
+        const dy = scaledTargetY - this.y;
+
+        this.vx = (this.vx + dx * this.spring) * this.friction;
+        this.vy = (this.vy + dy * this.spring) * this.friction;
+
+        // Interactive mouse / touch repulsion
+        if (mouseX !== null && mouseY !== null) {
+          const mdx = this.x - mouseX;
+          const mdy = this.y - mouseY;
+          const dist = Math.sqrt(mdx * mdx + mdy * mdy);
+          const maxDist = 90;
+
+          if (dist < maxDist && dist > 0) {
+            const force = (maxDist - dist) / maxDist;
+            const push = force * 8;
+            this.vx += (mdx / dist) * push;
+            this.vy += (mdy / dist) * push;
+          }
+        }
+
+        this.x += this.vx;
+        this.y += this.vy;
+
+        // Smooth fade-in
+        if (this.alpha < this.maxAlpha) {
+          this.alpha += 0.03;
+        }
+
+        this.rotation += this.rotationSpeed;
+      }
+
+      draw(ctx) {
+        if (this.alpha <= 0.02) return;
+
+        ctx.save();
+        ctx.translate(this.x, this.y);
+        ctx.rotate(this.rotation);
+
+        ctx.font = `800 ${this.size}px 'Plus Jakarta Sans', sans-serif`;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+
+        // Soft neon glow
+        ctx.shadowColor = this.color;
+        ctx.shadowBlur = 10;
+        ctx.fillStyle = this.color;
+        ctx.globalAlpha = this.alpha;
+
+        ctx.fillText(this.text, 0, 0);
+
+        ctx.restore();
+      }
+    }
+
+    /* Interactive Click Burst: Mini 'iman' floating hearts */
+    class ClickBurstParticle {
+      constructor(x, y, text, color) {
+        this.x = x;
+        this.y = y;
+        const angle = Math.random() * Math.PI * 2;
+        const speed = Math.random() * 7 + 2;
+        this.vx = Math.cos(angle) * speed;
+        this.vy = Math.sin(angle) * speed - 2.5; // upward drift
+        this.text = text;
+        this.color = color;
+        this.alpha = 1;
+        this.decay = Math.random() * 0.018 + 0.012;
+        this.size = Math.random() * 4 + 10;
+        this.rotation = (Math.random() - 0.5) * 0.5;
+        this.rotSpeed = (Math.random() - 0.5) * 0.05;
+      }
+
+      update() {
+        this.x += this.vx;
+        this.y += this.vy;
+        this.vy += 0.04; // subtle gravity
+        this.vx *= 0.98;
+        this.rotation += this.rotSpeed;
+        this.alpha -= this.decay;
+      }
+
+      draw(ctx) {
+        if (this.alpha <= 0) return;
+        ctx.save();
+        ctx.translate(this.x, this.y);
+        ctx.rotate(this.rotation);
+        ctx.font = `700 ${this.size}px 'Plus Jakarta Sans', sans-serif`;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.shadowColor = this.color;
+        ctx.shadowBlur = 12;
+        ctx.fillStyle = this.color;
+        ctx.globalAlpha = Math.max(0, this.alpha);
+        ctx.fillText(this.text, 0, 0);
+        ctx.restore();
+      }
+    }
+
+    /* ==========================================================
+       BUILDING THE HEART OF 'IMAN'
+       ========================================================== */
+    function buildHeartParticles(originX = width / 2, originY = height / 2) {
+      heartParticles.length = 0;
+
+      const theme = THEMES[currentThemeIndex];
+      // Responsive scale for heart curve
+      const baseScale = Math.min(width, height) / 36;
+
+      // 1. OUTER CONTOUR: Crisp, dense perimeter formed by 'IMAN'
+      const outerPoints = 140;
+      for (let i = 0; i < outerPoints; i++) {
+        const t = (i / outerPoints) * (Math.PI * 2);
+        const pt = getHeartPoint(t, baseScale);
+        const targetX = width / 2 + pt.x;
+        const targetY = height / 2 + pt.y - baseScale * 1.5;
+
+        const color = theme.colors[i % theme.colors.length];
+        const delay = Math.floor(Math.random() * 12);
+        const particle = new TextHeartParticle(targetX, targetY, 1.0, currentName, color, delay);
+        particle.x = originX;
+        particle.y = originY;
+        heartParticles.push(particle);
+      }
+
+      // 2. INNER CONCENTRIC SHELLS: Creating rich heart layers
+      const shells = [0.85, 0.70, 0.55, 0.40, 0.25];
+      shells.forEach((shellScale, sIndex) => {
+        const pointsCount = Math.floor(outerPoints * shellScale * 0.85);
+        for (let i = 0; i < pointsCount; i++) {
+          const t = (i / pointsCount) * (Math.PI * 2) + sIndex * 0.2;
+          const pt = getHeartPoint(t, baseScale * shellScale);
+          const targetX = width / 2 + pt.x;
+          const targetY = height / 2 + pt.y - baseScale * 1.5;
+
+          const color = theme.colors[(i + sIndex * 3) % theme.colors.length];
+          const delay = Math.floor(Math.random() * 18);
+          const particle = new TextHeartParticle(targetX, targetY, shellScale, currentName, color, delay);
+          particle.x = originX;
+          particle.y = originY;
+          heartParticles.push(particle);
+        }
+      });
+
+      // 3. INTERNAL VOLUMETRIC FILL: Uniform internal distribution
+      const internalCount = 180;
+      for (let i = 0; i < internalCount; i++) {
+        // Random t and random radial factor with sqrt to prevent crowding in center
+        const t = Math.random() * Math.PI * 2;
+        const r = Math.sqrt(Math.random()) * 0.88;
+        const pt = getHeartPoint(t, baseScale * r);
+
+        // Add small jitter so words naturally nest together
+        const jitterX = (Math.random() - 0.5) * 16;
+        const jitterY = (Math.random() - 0.5) * 16;
+
+        const targetX = width / 2 + pt.x + jitterX;
+        const targetY = height / 2 + pt.y - baseScale * 1.5 + jitterY;
+
+        const color = theme.colors[Math.floor(Math.random() * theme.colors.length)];
+        const delay = Math.floor(Math.random() * 22);
+        const particle = new TextHeartParticle(targetX, targetY, r, currentName, color, delay);
+        particle.x = originX;
+        particle.y = originY;
+        heartParticles.push(particle);
+      }
+    }
+
+    function recalculateHeartTargets() {
+      if (heartParticles.length === 0) return;
+      const baseScale = Math.min(width, height) / 36;
+
+      // We re-generate the heart smoothly keeping existing particles in motion
+      buildHeartParticles(width / 2, height / 2);
+    }
+
+    /* ==========================================================
+       AUTHENTIC HUMAN HEARTBEAT CURVE
+       ========================================================== */
+    function getHeartbeatScale(time) {
+      // Period: 1.15 seconds per cycle (approx 52-70 bpm)
+      const period = 1.15;
+      const t = (time % period) / period;
+
+      let pulse = 1.0;
+      // Lub (First ventricles contraction)
+      if (t < 0.14) {
+        pulse += 0.08 * Math.sin((t / 0.14) * Math.PI);
+      }
+      // Dub (Second aortic snap)
+      else if (t >= 0.18 && t < 0.32) {
+        pulse += 0.05 * Math.sin(((t - 0.18) / 0.14) * Math.PI);
+      }
+      return pulse;
+    }
+
+    /* ==========================================================
+       MOUSE & TOUCH INTERACTION
+       ========================================================== */
+    let mouseX = null;
+    let mouseY = null;
+
+    function handlePointerMove(e) {
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+      mouseX = clientX;
+      mouseY = clientY;
+    }
+
+    function handlePointerLeave() {
+      mouseX = null;
+      mouseY = null;
+    }
+
+    window.addEventListener("mousemove", handlePointerMove);
+    window.addEventListener("touchmove", handlePointerMove, { passive: true });
+    window.addEventListener("mouseout", handlePointerLeave);
+    window.addEventListener("touchend", handlePointerLeave);
+
+    // Click anywhere on screen to trigger interactive burst
+    window.addEventListener("pointerdown", (e) => {
+      // Ignore if clicking UI buttons or modal
+      if (e.target.closest("button") || e.target.closest(".modal-box") || e.target.closest(".modal-backdrop.active")) {
+        return;
+      }
+
+      initAudio();
+
+      if (!hasExploded) {
+        triggerExplosion(e.clientX, e.clientY);
+        return;
+      }
+
+      // Spawn interactive burst of mini 'iman'
+      const theme = THEMES[currentThemeIndex];
+      const count = 14;
+      for (let i = 0; i < count; i++) {
+        const color = theme.colors[Math.floor(Math.random() * theme.colors.length)];
+        burstParticles.push(new ClickBurstParticle(e.clientX, e.clientY, currentName, color));
+      }
+
+      playRandomMelody();
+    });
+
+    /* ==========================================================
+       TRIGGER EXPLOSION & BLOOM
+       ========================================================== */
+    function triggerExplosion(clickX = width / 2, clickY = height / 2) {
+      initAudio();
+      hasExploded = true;
+
+      const startScreen = document.getElementById("startScreen");
+      const centerCard = document.getElementById("centerCard");
+
+      startScreen.classList.add("hidden");
+      centerCard.classList.add("visible");
+
+      // Build particles originating from click point
+      buildHeartParticles(clickX, clickY);
+
+      // Play audio & sound effects
+      playExplosionSound();
+
+      // Spawn initial celebratory sparkles
+      const theme = THEMES[currentThemeIndex];
+      for (let i = 0; i < 40; i++) {
+        const color = theme.colors[Math.floor(Math.random() * theme.colors.length)];
+        burstParticles.push(new ClickBurstParticle(clickX, clickY, currentName, color));
+      }
+    }
+
+    /* ==========================================================
+       MAIN ANIMATION LOOP
+       ========================================================== */
+    let startTime = performance.now();
+
+    function render(currentTime) {
+      const elapsed = (currentTime - startTime) / 1000;
+
+      // Clear Canvas
+      ctx.clearRect(0, 0, width, height);
+
+      // 1. Draw Ambient Stars
+      for (let i = 0; i < ambientStars.length; i++) {
+        const star = ambientStars[i];
+        star.x += star.driftX;
+        star.y += star.driftY;
+        if (star.x < 0) star.x = width;
+        if (star.x > width) star.x = 0;
+        if (star.y < 0) star.y = height;
+        if (star.y > height) star.y = 0;
+
+        star.alpha += star.speed;
+        const currentAlpha = (Math.sin(star.alpha) + 1) * 0.35 + 0.1;
+
+        ctx.fillStyle = `rgba(255, 255, 255, ${currentAlpha})`;
+        ctx.beginPath();
+        ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // 2. Draw Heart Particles (Only when exploded)
+      if (hasExploded) {
+        const heartScale = getHeartbeatScale(elapsed);
+
+        for (let i = 0; i < heartParticles.length; i++) {
+          const p = heartParticles[i];
+          p.update(elapsed, heartScale, mouseX, mouseY);
+          p.draw(ctx);
+        }
+      }
+
+      // 3. Draw Click Bursts
+      for (let i = burstParticles.length - 1; i >= 0; i--) {
+        const bp = burstParticles[i];
+        bp.update();
+        bp.draw(ctx);
+        if (bp.alpha <= 0) {
+          burstParticles.splice(i, 1);
+        }
+      }
+
+      requestAnimationFrame(render);
+    }
+
+    requestAnimationFrame(render);
+
+    /* ==========================================================
+       UI INTERACTIVITY & EVENT LISTENERS
+       ========================================================= */
+    const startBtn = document.getElementById("startBtn");
+    const soundBtn = document.getElementById("soundBtn");
+    const soundIcon = document.getElementById("soundIcon");
+    const soundLabel = document.getElementById("soundLabel");
+    const themeBtn = document.getElementById("themeBtn");
+    const renameBtn = document.getElementById("renameBtn");
+    const replayBtn = document.getElementById("replayBtn");
+    const bottomHint = document.getElementById("bottomHint");
+
+    const modalBackdrop = document.getElementById("modalBackdrop");
+    const nameInput = document.getElementById("nameInput");
+    const cancelModal = document.getElementById("cancelModal");
+    const saveModal = document.getElementById("saveModal");
+
+    const badgeName = document.getElementById("badgeName");
+    const mainDisplay = document.getElementById("mainDisplay");
+
+    // Click Start Button
+    startBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const rect = startBtn.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+      triggerExplosion(centerX, centerY);
+    });
+
+    // Toggle Sound
+    soundBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      initAudio();
+      isSoundOn = !isSoundOn;
+      soundIcon.textContent = isSoundOn ? "🔊" : "🔇";
+      soundLabel.textContent = isSoundOn ? "Musik: On" : "Musik: Off";
+    });
+
+    // Switch Themes
+    themeBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      initAudio();
+      currentThemeIndex = (currentThemeIndex + 1) % THEMES.length;
+      const theme = THEMES[currentThemeIndex];
+
+      // Update background glows
+      document.getElementById("glow1").style.background = `radial-gradient(circle, ${theme.glow1} 0%, rgba(255, 45, 85, 0) 70%)`;
+      document.getElementById("glow2").style.background = `radial-gradient(circle, ${theme.glow2} 0%, rgba(168, 56, 255, 0) 70%)`;
+      document.body.style.background = `radial-gradient(circle at center, ${theme.bgCenter} 0%, ${theme.bgOuter} 100%)`;
+
+      // Update particle colors
+      heartParticles.forEach((p, idx) => {
+        p.color = theme.colors[idx % theme.colors.length];
+      });
+
+      playChime(659.25, 0.5, "sine");
+    });
+
+    // Replay bloom
+    replayBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      triggerExplosion(width / 2, height / 2);
+    });
+
+    // Bottom hint click to burst
+    bottomHint.addEventListener("click", (e) => {
+      e.stopPropagation();
+      if (!hasExploded) {
+        triggerExplosion(width / 2, height / 2);
+      } else {
+        const rect = bottomHint.getBoundingClientRect();
+        triggerBurstAt(rect.left + rect.width / 2, rect.top);
+      }
+    });
+
+    function triggerBurstAt(x, y) {
+      initAudio();
+      const theme = THEMES[currentThemeIndex];
+      for (let i = 0; i < 20; i++) {
+        const color = theme.colors[Math.floor(Math.random() * theme.colors.length)];
+        burstParticles.push(new ClickBurstParticle(x, y, currentName, color));
+      }
+      playRandomMelody();
+    }
+
+    // Rename Modal Handling
+    renameBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      nameInput.value = currentName;
+      modalBackdrop.classList.add("active");
+      setTimeout(() => nameInput.focus(), 100);
+    });
+
+    cancelModal.addEventListener("click", (e) => {
+      e.stopPropagation();
+      modalBackdrop.classList.remove("active");
+    });
+
+    modalBackdrop.addEventListener("click", (e) => {
+      if (e.target === modalBackdrop) {
+        modalBackdrop.classList.remove("active");
+      }
+    });
+
+    saveModal.addEventListener("click", (e) => {
+      e.stopPropagation();
+      applyNewName();
+    });
+
+    nameInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        applyNewName();
+      } else if (e.key === "Escape") {
+        modalBackdrop.classList.remove("active");
+      }
+    });
+
+    function applyNewName() {
+      const val = nameInput.value.trim();
+      if (val) {
+        currentName = val;
+        badgeName.textContent = currentName;
+        mainDisplay.textContent = currentName;
+
+        // Update all heart particles text
+        heartParticles.forEach((p) => {
+          p.text = currentName;
+        });
+
+        modalBackdrop.classList.remove("active");
+        playChime(587.33, 0.6, "triangle");
+      }
+    }
+  </script>
+</body>
+</html>
